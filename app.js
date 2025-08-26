@@ -8,5 +8,6 @@ app.use(express.urlencoded({ extended: true }));
 app.post("/login", (req, res, next) => {
   UserController.login(req, res, next);
 });
+app.post("/register", UserController.register);
 
 app.listen(3000, () => console.log("EZ"));

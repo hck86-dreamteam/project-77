@@ -1,4 +1,5 @@
 const { User } = require("../models");
+
 const { comparePassword } = require("../helpers/bcrypt");
 const { signToken } = require("../helpers/jwt");
 
@@ -35,6 +36,25 @@ module.exports = class UserController {
         res.status(400).json({ message: err.message });
       } else if (err.name === "Unauthorized") {
         res.status(401).json({ message: err.message });
+      } else {
+        res.status(500).json({ message: "Internal server error" });
+      }
+    }
+  }
+
+  static async register(req, res) {
+    try {
+      const user = await User.create(req.body);
+      res.status(201).json({
+        id: user.id,
+        email: user.email,
+      });
+    } catch (err) {
+      if (
+        err.name === "SequelizeValidationError" ||
+        err.name === "SequelizeUniqueConstraintError"
+      ) {
+        res.status(400).json({ message: err.errors[0].message });
       } else {
         res.status(500).json({ message: "Internal server error" });
       }
